@@ -3,7 +3,6 @@
 //  SampleProject
 //
 //  Created by Neil on 05/12/2012.
-//  Copyright (c) 2012 @supermarin | supermar.in. All rights reserved.
 //
 
 #import "NSString+ObjectiveSugar.h"
@@ -16,14 +15,14 @@ static NSString *const EMPTY_STRING = @"";
 NSString *NSStringWithFormat(NSString *formatString, ...) {
     va_list args;
     va_start(args, formatString);
-
+    
     NSString *string = [[NSString alloc] initWithFormat:formatString arguments:args];
-
+    
     va_end(args);
-
+    
 #if defined(__has_feature) && __has_feature(objc_arc)
     return string;
-#else
+#else 
     return [string autorelease];
 #endif
 }
@@ -44,15 +43,9 @@ NSString *NSStringWithFormat(NSString *formatString, ...) {
 
 - (NSString *)camelCase {
     NSString *spaced = [self stringByReplacingOccurrencesOfString:UNDERSCORE withString:SPACE];
-    NSString *capitalized = [spaced capitalizedString];
-
+    NSString *capitalized = spaced.capitalizedString;
+    
     return [capitalized stringByReplacingOccurrencesOfString:SPACE withString:EMPTY_STRING];
-}
-
-- (NSString *)lowerCamelCase {
-    NSString *upperCamelCase = [self camelCase];
-    NSString *firstLetter = [upperCamelCase substringToIndex:1];
-    return [upperCamelCase stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:firstLetter.lowercaseString];
 }
 
 - (BOOL)containsString:(NSString *) string {
@@ -62,13 +55,6 @@ NSString *NSStringWithFormat(NSString *formatString, ...) {
 
 - (NSString *)strip {
     return [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-}
-
-- (NSString *)match:(NSString *)pattern {
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:nil];
-    NSTextCheckingResult *match = [regex firstMatchInString:self options:0 range:NSMakeRange(0, self.length)];
-    
-    return (match != nil) ? [self substringWithRange:[match range]] : nil;
 }
 
 @end

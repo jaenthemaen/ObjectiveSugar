@@ -11,7 +11,7 @@
 
 @implementation NSSet (ObjectiveSugar)
 
-- (id)firstObject {
+- (id)first {
     NSArray *allObjects = self.allObjects;
 
     if (allObjects.count > 0)
@@ -19,12 +19,12 @@
     return nil;
 }
 
-- (id)lastObject {
+- (id)last {
     return self.allObjects.lastObject;
 }
 
 - (id)sample {
-    return [self anyObject];
+    return [self.allObjects sample];
 }
 
 - (void)each:(void (^)(id))block {
@@ -43,70 +43,44 @@
 
 - (NSArray *)map:(id (^)(id object))block {
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:self.count];
-
-
+    
     for (id object in self) {
-        id mappedObject = block(object);
-        if(mappedObject) {
-            [array addObject:mappedObject];
+        id newObject = block(object);
+        if (newObject) {
+            [array addObject:newObject];
         }
     }
-
+    
     return array;
 }
 
-- (NSArray *)select:(BOOL (^)(id object))block {
+- (NSArray<id> *)select:(BOOL (^)(id object))block {
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:self.count];
-
+    
     for (id object in self) {
         if (block(object)) {
             [array addObject:object];
         }
     }
-
+    
     return array;
 }
 
-- (NSArray *)reject:(BOOL (^)(id object))block {
+- (NSArray<id> *)reject:(BOOL (^)(id object))block {
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:self.count];
-
+    
     for (id object in self) {
         if (block(object) == NO) {
             [array addObject:object];
         }
     }
-
+    
     return array;
 }
 
-- (NSArray *)sort {
+- (NSArray<id> *)sort {
     NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:nil ascending:YES];
     return [self sortedArrayUsingDescriptors:@[sortDescriptor]];
 }
 
-- (id)reduce:(id(^)(id accumulator, id object))block {
-    return [self reduce:nil withBlock:block];
-}
-
-- (id)reduce:(id)initial withBlock:(id(^)(id accumulator, id object))block {
-	id accumulator = initial;
-
-	for(id object in self)
-		accumulator = accumulator ? block(accumulator, object) : object;
-
-	return accumulator;
-}
-
-
-#pragma mark - Deprecations
-
-- (id)first DEPRECATED_ATTRIBUTE {
-    return [self firstObject];
-}
-
-- (id)last DEPRECATED_ATTRIBUTE {
-    return [self lastObject];
-}
-
 @end
-

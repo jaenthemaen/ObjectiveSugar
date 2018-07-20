@@ -8,171 +8,162 @@
 
 // For an overview see http://cocoadocs.org/docsets/ObjectiveSugar/
 
-#import <Foundation/Foundation.h>
+NS_ASSUME_NONNULL_BEGIN
 
-@interface NSArray (ObjectiveSugar)
+@interface NSArray<__covariant ObjectType> (ObjectiveSugar)
+
+@property (nonatomic, strong, readonly) NSSet<ObjectType> *set;
+@property (nonatomic, strong, readonly) NSMutableSet<ObjectType> *mutableSet;
+@property (nonatomic, strong, readonly) NSOrderedSet<ObjectType> *orderedSet;
+@property (nonatomic, strong, readonly) NSMutableOrderedSet<ObjectType> *mutableOrderedSet;
 
 /**
  The first item in the array, or nil.
 
  @return  The first item in the array, or nil.
  */
-- (id)first DEPRECATED_MSG_ATTRIBUTE("Please use -firstObject instead");
+
+- (nullable ObjectType) first;
 
 /**
  The last item in the array, or nil.
 
  @return  The last item in the array, or nil.
  */
-- (id)last DEPRECATED_MSG_ATTRIBUTE("Please use -lastObject instead");
+
+- (ObjectType) last;
+
 
 /**
  A random element in the array, or nil.
 
  @return  A random element in the array, or nil.
  */
-- (id)sample;
 
-/// Alias for -sample
-- (id)anyObject;
+- (nullable ObjectType) sample;
 
 
 /**
  Allow subscripting to fetch elements within the specified range
-
- @param key An NSString or NSValue wrapping an NSRange. It's intended to behave like Ruby's array range accessors.
-
+ 
+ @param An NSString or NSValue wrapping an NSRange. It's intended to behave like Ruby's array range accessors.
+ 
         Given array of 10 elements, e.g. [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], you can perform these operations:
         array[@"1..3"] will give you [2, 3, 4]
         array[@"1...3"] will give you [2, 3] (last value excluded)
         array[@"1,3"] implies NSRange(location: 1, length: 3), and gives you [2, 3, 4]
 
-
+ 
  @return An array with elements within the specified range
  */
-- (id)objectForKeyedSubscript:(id <NSCopying>)key;
+- (nullable ObjectType)objectForKeyedSubscript:(id <NSCopying>)key;
 
 
 /**
  A simpler alias for `enumerateObjectsUsingBlock`
 
- @param block A block with the object in its arguments.
+ @param A block with the object in its arguments.
  */
-- (void)each:(void (^)(id object))block;
+
+- (void)each:(void (^)(ObjectType object))block;
 
 /**
  A simpler alias for `enumerateObjectsUsingBlock` which also passes in an index
 
- @param block A block with the object in its arguments.
- */
-- (void)eachWithIndex:(void (^)(id object, NSUInteger index))block;
-
-/**
- A simpler alias for `enumerateObjectsWithOptions:usingBlock:`
-
- @param block A block with the object in its arguments.
- @param options Enumerating options.
+ @param A block with the object in its arguments.
  */
 
-- (void)each:(void (^)(id object))block options:(NSEnumerationOptions)options;
-
-/**
- A simpler alias for `enumerateObjectsWithOptions:usingBlock:` which also passes in an index
-
- @param block A block with the object in its arguments.
- @param options Enumerating options.
- */
-
-- (void)eachWithIndex:(void (^)(id object, NSUInteger index))block options:(NSEnumerationOptions)options;
-
+- (void)eachWithIndex:(void (^)(ObjectType object, NSUInteger index))block;
 
 /**
  An alias for `containsObject`
 
- @param object An object that the array may or may not contain.
+ @param An object that the array may or may not contain.
  */
-- (BOOL)includes:(id)object;
+
+- (BOOL)includes:(ObjectType)object;
 
 /**
  Take the first `numberOfElements` out of the array, or the maximum amount of
  elements if it is less.
 
- @param numberOfElements Number of elements to take from array
+ @param Number of elements to take from array
  @return An array of elements
  */
-- (NSArray *)take:(NSUInteger)numberOfElements;
+
+- (NSArray<ObjectType> *)take:(NSUInteger)numberOfElements;
 
 /**
- Passes elements to the `block` until the block returns NO,
+ Passes elements to the `block` until the block returns NO, 
  then stops iterating and returns an array of all prior elements.
 
- @param block A block that returns YES/NO
+ @param A block that returns YES/NO
  @return An array of elements
  */
-- (NSArray *)takeWhile:(BOOL (^)(id object))block;
+- (NSArray<ObjectType> *)takeWhile:(BOOL (^)(ObjectType object))block;
 
 /**
  Iterate through the current array running the block on each object and
  returning an array of the changed objects.
 
- @param block A block that passes in each object and returns a modified object
+ @param A block that passes in each object and returns a modified object
  @return An array of modified elements
  */
-- (NSArray *)map:(id (^)(id object))block;
+
+- (NSArray *)map:(id (^)(ObjectType object))block;
 
 /**
  Iterate through current array asking whether to keep each element.
 
- @param block A block that returns YES/NO for whether the object should stay
+ @param A block that returns YES/NO for whether the object should stay
  @return An array of elements selected
  */
-- (NSArray *)select:(BOOL (^)(id object))block;
+
+- (NSArray<ObjectType> *)select:(BOOL (^)(ObjectType object))block;
 
 /**
  Iterate through current array returning the first element meeting a criteria.
 
- @param block A block that returns YES/NO
+ @param A block that returns YES/NO
  @return The first matching element
  */
-- (id)detect:(BOOL (^)(id object))block;
+
+- (nullable ObjectType)detect:(BOOL (^)(ObjectType object))block;
 
 
 /**
  Alias for `detect`. Iterate through current array returning the first element
  meeting a criteria.
 
- @param block A block that returns YES/NO
+ @param A block that returns YES/NO
  @return The first matching element
  */
-- (id)find:(BOOL (^)(id object))block;
+
+- (nullable ObjectType)find:(BOOL (^)(ObjectType object))block;
 
 /**
  Iterate through current array asking whether to remove each element.
 
- @param block A block that returns YES/NO for whether the object should be removed
+ @param A block that returns YES/NO for whether the object should be removed
  @return An array of elements not rejected
  */
-- (NSArray *)reject:(BOOL (^)(id object))block;
+
+- (NSArray<ObjectType> *)reject:(BOOL (^)(ObjectType object))block;
 
 /**
  Recurse through self checking for NSArrays and extract all elements into one single array
 
  @return An array of all held arrays merged
  */
-- (NSArray *)flatten;
 
-/**
- Remove all the nulls from array
-
- @return A copy of the given array without NSNulls
- */
-- (NSArray *)compact;
+- (NSArray<ObjectType> *)flatten;
 
 /**
  Alias for `componentsJoinedByString` with a default of no seperator
 
- @return A string of all objects joined with an empty string
+ @return A string of all objects joined with an empty string 
  */
+
 - (NSString *)join;
 
 /**
@@ -180,28 +171,31 @@
 
  @return A string of all objects joined with the `seperator` string
  */
+
 - (NSString *)join:(NSString *)separator;
 
 /**
  Run the default comparator on each object in the array
-
+ 
  @return A sorted copy of the array
  */
-- (NSArray *)sort;
+- (NSArray<ObjectType> *)sort;
 
 /**
  Sorts the array using the the default comparator on the given key
 
  @return A sorted copy of the array
  */
-- (NSArray *)sortBy:(NSString *)key;
+- (NSArray<ObjectType> *)sortBy:(NSString*)key;
+
+- (NSArray<ObjectType> *)sortByKeyPaths:(NSArray<NSString *> *)keyPaths;
 
 /**
  Alias for reverseObjectEnumerator.allObjects
-
+ 
  Returns a reversed array
  */
-- (NSArray *)reverse;
+- (NSArray<ObjectType> *)reverse;
 
 /**
  Return all the objects that are in both self and `array`.
@@ -209,7 +203,8 @@
 
  @return An array of objects common to both arrays
  */
-- (NSArray *)intersectionWithArray:(NSArray *)array;
+
+- (NSArray<ObjectType> *)intersectionWithArray:(NSArray<ObjectType> *)array;
 
 /**
  Return all the objects that in both self and `array` combined.
@@ -218,7 +213,7 @@
  @return An array of the two arrays combined
  */
 
-- (NSArray *)unionWithArray:(NSArray *)array;
+- (NSArray<ObjectType> *)unionWithArray:(NSArray<ObjectType> *)array;
 
 /**
  Return all the objects in self that are not in `array`.
@@ -227,7 +222,7 @@
  @return An array of the self without objects in `array`
  */
 
-- (NSArray *)relativeComplement:(NSArray *)array;
+- (NSArray<ObjectType> *)relativeComplement:(NSArray<ObjectType> *)array;
 
 /**
  Return all the objects that are unique to each array individually
@@ -235,26 +230,57 @@
 
  @return An array of elements which are in either of the arrays and not in their intersection.
  */
-- (NSArray *)symmetricDifference:(NSArray *)array;
 
-/**
- Return a single value from an array by iterating through the elements and transforming a running total.
+- (NSArray<ObjectType> *)symmetricDifference:(NSArray<ObjectType> *)array;
 
- @return A single value that is the end result of apply the block function to each element successively.
- **/
-- (id)reduce:(id (^)(id accumulator, id object))block;
+- (NSArray<ObjectType> *)filteredArrayByDistinctValuesOfKeyPath:(NSString *)keyPath;
 
-/**
- Same as -reduce, with initial value provided by yourself
- **/
-- (id)reduce:(id)initial withBlock:(id (^)(id accumulator, id object))block;
+- (NSArray<ObjectType> *)arrayByRemovingObject:(id)anObject;
+- (NSArray<ObjectType> *)arrayByRemovingObjectsFromArray:(NSArray<ObjectType> *)otherArray;
 
-/**
- Produces a duplicate-free version of the array
- 
- @return a new array with all unique elements
- **/
-- (NSArray *)unique;
+- (NSArray *)distinctValuesForKeyPath:(NSString *)keyPath;
+- (NSArray *)flattenedValuesForKeyPath:(NSString *)keyPath;
+- (NSArray *)distinctFlattenedValuesForKeyPath:(NSString *)keyPath;
+- (NSArray *)nonNullValuesForKeyPath:(NSString *)keyPath;
+- (NSArray *)sortedValuesForKeyPath:(NSString *)keyPath;
+
+- (NSArray<ObjectType> *)distinctFlatten;
+- (NSArray<ObjectType> *)filterNull;
+- (NSArray *)flatMap:(id (^)(ObjectType object))block;
+- (NSArray *)distinctFlatMap:(id (^)(ObjectType object))block;
+
+- (BOOL)containsArray:(NSArray<ObjectType> *)array;
 
 @end
 
+
+@class NSOrderedDictionaryKey;
+
+@interface NSArray<__covariant ObjectType> (Grouping)
+
+- (NSDictionary<__kindof id<NSCopying>, NSArray<ObjectType> *> *)groupBy:(NSString *)keyPath;
+- (NSDictionary<NSString *, NSArray<__kindof NSObject *> *> *)groupByStringIDsInArrayAtKeypath:(NSString *)keyPath;
+- (NSDictionary<__kindof id<NSCopying>, NSNumber *> *)groupWithCountedValuesBy:(NSString *)keyPath;
+
+/** Like groupBy, but only assigns one value to a calculated key, so the result can be used as a lookup-map; multiple lookup-keys per array-elem are explicitely allowed */
+- (NSDictionary<__kindof id<NSCopying>, __kindof NSObject *> *)lookupDictionaryByKeyPath:(NSString *)keyPath;
+
+- (NSDictionary<NSOrderedDictionaryKey *, NSArray<ObjectType> *> *)groupOrderedBy:(NSString *)keyPath;
+- (NSDictionary <__kindof id<NSCopying>, NSArray<ObjectType> *> *)groupWithDistinctValuesBy:(NSString *)keyPath;
+
+@end
+
+@interface NSOrderedDictionaryKey : NSObject<NSCopying>
+
+@property (nonatomic, strong, readonly) id<NSCopying, NSObject> key;
+@property (nonatomic, assign, readonly) NSUInteger index;
+
+- (instancetype)initWithKey:(id<NSCopying, NSObject>)key index:(NSUInteger)index NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+@end
+
+/** Creates an array of numbers calculated from the given range. Array[0] = range.location; Array[1] = range.location + 1, ..., Array.lastObject = range.location + range.length - 1 */
+extern NSArray *NSRangeToArray(NSRange range);
+
+NS_ASSUME_NONNULL_END

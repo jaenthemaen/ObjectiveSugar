@@ -32,14 +32,14 @@
 
 - (NSArray *)map:(id (^)(id key, id value))block {
     NSMutableArray *array = [NSMutableArray array];
-
+    
     [self enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         id object = block(key, obj);
         if (object) {
           [array addObject:object];
         }
     }];
-
+    
     return array;
 }
 
@@ -47,58 +47,16 @@
     return !!self[key];
 }
 
-- (NSDictionary *)pick:(NSArray *)keys {
-    NSMutableDictionary *picked = [[NSMutableDictionary alloc] initWithCapacity:keys.count];
-
-    [self enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+- (NSArray<id> *)valuesForKeys:(NSSet<NSString *> *)keys {
+    if (!keys.count) return @[];
+    
+    NSMutableArray *result = [NSMutableArray new];
+    for (NSString *key in self.allKeys) {
         if ([keys containsObject:key]) {
-            picked[key] = obj;
+            [result addObject:self[key]];
         }
-    }];
-
-    return picked;
-}
-
-- (NSDictionary *)omit:(NSArray *)keys {
-    NSMutableDictionary *omitted = [[NSMutableDictionary alloc] initWithCapacity:([self allKeys].count - keys.count)];
-
-    [self enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        if (![keys containsObject:key]) {
-            omitted[key] = obj;
-        }
-    }];
-
-    return omitted;
-}
-
-- (NSDictionary *)merge:(NSDictionary *)dictionary {
-    NSMutableDictionary *merged = [NSMutableDictionary dictionaryWithDictionary:self];
-    [merged addEntriesFromDictionary:dictionary];
-    return merged;
-}
-
-- (NSDictionary *)merge:(NSDictionary *)dictionary block:(id(^)(id key, id oldVal, id newVal))block {
-    NSMutableDictionary *merged = [NSMutableDictionary dictionary];
-    [[[self allKeys] relativeComplement:[dictionary allKeys]] each:^(id key) {
-        merged[key] = self[key];
-    }];
-
-    [[[dictionary allKeys] relativeComplement:[self allKeys]] each:^(id key) {
-        merged[key] = dictionary[key];
-    }];
-
-    [[[self allKeys] intersectionWithArray:[dictionary allKeys]] each:^(id key) {
-        merged[key] = block(key, self[key], dictionary[key]);
-    }];
-    return merged;
-}
-
-- (NSDictionary *)invert {
-    NSMutableDictionary *inverted = [NSMutableDictionary dictionary];
-    for (id key in [self allKeys]) {
-        inverted[self[key]] = key;
     }
-    return inverted;
+    return [result copy];
 }
 
 @end

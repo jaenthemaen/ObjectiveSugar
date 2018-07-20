@@ -99,11 +99,11 @@
 }
 
 - (NSDate *)ago:(NSDate *)time {
-    return [NSDate dateWithTimeIntervalSince1970:([time timeIntervalSince1970] - self.floatValue)];
+    return [NSDate dateWithTimeIntervalSince1970:(time.timeIntervalSince1970 - self.floatValue)];
 }
 
 - (NSDate *)since:(NSDate *)time {
-    return [NSDate dateWithTimeIntervalSince1970:([time timeIntervalSince1970] + self.floatValue)];
+    return [NSDate dateWithTimeIntervalSince1970:(time.timeIntervalSince1970 + self.floatValue)];
 }
 
 - (NSDate *)until:(NSDate *)time {
